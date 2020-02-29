@@ -1,0 +1,17 @@
+\select@language {english}
+\contentsline {section}{\numberline {1}Explanation of the problem}{2}
+\contentsline {section}{\numberline {2}Mathematical modelling}{2}
+\contentsline {subsection}{\numberline {2.1}Weak form of the problem}{3}
+\contentsline {section}{\numberline {3}Numerical discretisation}{5}
+\contentsline {subsection}{\numberline {3.1}Numerical discretisation of the mixed form}{6}
+\contentsline {subsection}{\numberline {3.2}Numerical discretisation of the diffusion transport problem}{7}
+\contentsline {subsection}{\numberline {3.3}Rate of convergence}{7}
+\contentsline {section}{\numberline {4}Results}{8}
+\contentsline {subsection}{\numberline {4.1}Non adaptative computation}{8}
+\contentsline {subsection}{\numberline {4.2}Uniform refinement of the mesh}{8}
+\contentsline {subsection}{\numberline {4.3}Local refinement of the mesh}{9}
+\contentsline {subsection}{\numberline {4.4}comparison of the running time and convergence}{10}
+\contentsline {section}{\numberline {1}FreeFem++ code}{13}
+\contentsline {subsection}{\numberline {1.1}First method}{13}
+\contentsline {subsection}{\numberline {1.2}Second method}{14}
+\contentsline {subsection}{\numberline {1.3}Third method}{15}

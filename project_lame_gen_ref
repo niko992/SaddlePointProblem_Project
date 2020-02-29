@@ -1,0 +1,76 @@
+	load "Element_Mixte"
+	real tol=0.0001;
+	real k=1;
+	real pin=0;
+	real pout=2;
+	real nu=0.05;
+	real phin=10;
+	real phiv=5;
+	real[int] phi(4);
+	real[int] nbvert(4);
+	int i=1;
+	macro div(v1,v2)(dx(v1)+dy(v2))//
+	macro grad(p) [dx(p),dy(p)]//
+	
+	border a(t=0,1){x=t;y=0;label=1;};
+	border b(t=0,1){x=1;y=t;label=2;};
+	border c(t=1,0){x=t;y=1;label=3;};
+	border d(t=1,0){x=0;y=t;label=4;};
+	
+	//region C1
+	border a1(t=0.48,0.52){x=t;y=0.48;label=11;};
+	border b1(t=0.48,0.52){x=0.52;y=t;label=12;};
+	border c1(t=0.52,0.48){x=t;y=0.52;label=13;};
+	border d1(t=0.52,0.48){x=0.48;y=t;label=14;};
+	
+	//regionC2
+	border a2(t=0.28,0.32){x=t;y=0.28;label=21;};
+	border b2(t=0.28,0.32){x=0.32;y=t;label=22;};
+	border c2(t=0.32,0.28){x=t;y=0.32;label=23;};
+	border d2(t=0.32,0.28){x=0.28;y=t;label=24;};
+	
+	mesh Th=buildmesh(a(10)+b(10)+c(10)+d(10)+
+	a1(3)+b1(3)+c1(3)+d1(3)+a2(3)+b2(3)+c2(3)+d2(3));
+	
+	while(abs(phin-phiv)>tol)
+	{
+	phiv=phin;
+	int r1=Th(0.5,0.5).region;
+	int r2=Th(0.3,0.3).region;
+	int r3=Th(0.7,0.7).region;
+	fespace Qh(Th,P1);
+	fespace Vh(Th,RT1);
+	Qh f=-1000.*(region==r1)+0.*(region==r2)+0.*(region==r3);
+	Qh g= 1000.*(region==r2)+0.*(region==r1)+0.*(region==r3);
+	plot (Th);
+	Qh ph,qh;
+	Vh [uh1,uh2],[vh1,vh2];
+	problem darcy([uh1,uh2,ph],[vh1,vh2,qh])=int2d(Th)
+	(k^(-1)*(uh1*vh1+uh2*vh2))-
+	int2d(Th)(qh*div(uh1,uh2))-
+	int1d(Th,2)(pout*vh1)-
+	int1d(Th,4)(-pin*vh1)-
+	int2d(Th)(ph*div(vh1,vh2))+
+	int2d(Th)(f*qh);
+	darcy;
+	plot(ph,fill=1, value=1,coef=1);
+	
+	fespace Wh(Th,P1);
+	Wh ch,bh;
+	problem transport(ch,bh)=int2d(Th)
+	(nu*(dx(ch)*dx(bh)+dy(ch)*dy(bh)))+
+	int2d(Th)((uh1*dx(ch)+uh2*dy(ch))*bh)-
+	int2d(Th)(g*bh)+on(1,3,4, ch=0);
+	transport;
+	plot(ch,value=1,fill=0);
+	phin=int2d(Th,r1)(ch);
+	phi(i-1)=phin;
+	nbvert(i-1)=Th.nv;
+	Th=splitmesh(Th,2);
+	//cout<<phin<<endl;
+	i=i+1;
+	}
+	ofstream phi1file("phi_test2.dat");
+	phi1file << phi << endl ;
+	ofstream nbvfile("nbv_test2.dat");
+	nbvfile<< nbvert <<endl;
